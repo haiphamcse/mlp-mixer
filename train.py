@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     # Setup Checkpoint
     ckpt_path = '/checkpoint'
-    ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_path, save_best_only=True, monitor='val_accuracy')
+    ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_path, save_best_only=True, monitor='val_acc')
     
     # Compile optimizer and loss function into model
     mlpmixer.compile(optimizer=adam, loss=loss_object, metrics=['acc'])
