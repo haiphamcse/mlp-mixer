@@ -1,18 +1,27 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers.experimental.preprocessing import Normalization, Resizing, RandomFlip, RandomRotation, RandomZoom
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding
+from keras.layers import Normalization, Resizing, RandomFlip, RandomRotation, RandomZoom
+from keras.models import Sequential
+from keras.layers import Embedding
 from keras import layers
-from tensorflow.keras.layers import Embedding, Input, LayerNormalization, Dense, GlobalAveragePooling1D, Dropout
+from keras.layers import Embedding, Input, LayerNormalization, Dense, GlobalAveragePooling1D, Dropout
 
 
 class Patches(layers.Layer):
+  """
+  Lớp Patch của model
+  """
   def __init__(self, patch_size):
     super(Patches, self).__init__()
     self.patch_size = patch_size
 
   def call(self, images):
+    """
+    Đầu vào:
+      images: ảnh kích thước [b, h, w, c]
+    Đầu ra:
+      patches: các patch kích thước [patch_size, patch_size, c]
+    """
     batch_size = tf.shape(images)[0]
     patches = tf.image.extract_patches(
         images= images, 
@@ -27,27 +36,30 @@ class Patches(layers.Layer):
     return patches  
     
 class MLPBlock(tf.keras.layers.Layer):
+  """
+  
+  """
   def __init__(self, S, C, DS, DC):
     super(MLPBlock, self).__init__()
     self.layerNorm1 = LayerNormalization()
     self.layerNorm2 = LayerNormalization()
     w_init = tf.random_normal_initializer()
-    self.DS = DS
-    self.DC = DC
+    self.DS = DS #Hidden Units for Token-Mixing
+    self.DC = DC #Hidden Units for Channel-Mixing
     self.W1 = tf.Variable(
-            initial_value=w_init(shape=(S, DS), dtype="float32"),
+            initial_value=w_init(shape=(S, DS), dtype=tf.float32),
             trainable=True,
     )
     self.W2 = tf.Variable(
-            initial_value=w_init(shape=(DS, S), dtype="float32"),
+            initial_value=w_init(shape=(DS, S), dtype=tf.float32),
             trainable=True,
     )
     self.W3 = tf.Variable(
-            initial_value=w_init(shape=(C, DC), dtype="float32"),
+            initial_value=w_init(shape=(C, DC), dtype=tf.float32),
             trainable=True,
     )
     self.W4 = tf.Variable(
-            initial_value=w_init(shape=(DC, C), dtype="float32"),
+            initial_value=w_init(shape=(DC, C), dtype=tf.float32),
             trainable=True,
     )
 
@@ -78,6 +90,8 @@ class MLPBlock(tf.keras.layers.Layer):
 
 
 class MLPMixer(tf.keras.models.Model):
+  """
+  """
   def __init__(self, patch_size, S, C, DS, DC, num_of_mlp_blocks, image_size, batch_size, num_classes):
     super(MLPMixer, self).__init__()
     self.projection = Dense(C)

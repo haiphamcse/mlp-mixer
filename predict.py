@@ -1,5 +1,5 @@
 import tensorflow as tf
-from model import MLPMixer
+from model import *
 from argparse import ArgumentParser
 import os
 import numpy as np

@@ -82,6 +82,10 @@ if __name__ == "__main__":
     # Optimizer Definition
     adam = tf.keras.optimizers.Adam(learning_rate=args.learning_rate)
 
+    # Setup Checkpoint
+    ckpt_path = '/checkpoint'
+    ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_path, save_best_only=True, monitor='val_accuracy')
+    
     # Compile optimizer and loss function into model
     mlpmixer.compile(optimizer=adam, loss=loss_object, metrics=['acc'])
 
@@ -91,6 +95,7 @@ if __name__ == "__main__":
         epochs=args.epochs, 
         batch_size=args.batch_size, 
         validation_data=val_ds,
+        callbacks=[ckpt_callback]
     )
 
     # Saving model
