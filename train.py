@@ -83,7 +83,7 @@ if __name__ == "__main__":
     adam = tf.keras.optimizers.Adam(learning_rate=args.learning_rate)
 
     # Setup Checkpoint
-    ckpt_path = '/checkpoint'
+    ckpt_path = '/checkpoint/'
     ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_path, save_best_only=True, monitor='val_acc')
     
     # Compile optimizer and loss function into model
